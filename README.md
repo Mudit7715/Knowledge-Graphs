@@ -1,23 +1,28 @@
-```markdown
-# Knowledge Graph Construction with LLMs and Neo4j
+# 🧠 Knowledge Graph Construction with LLMs and Neo4j
 
 This guide demonstrates how to build knowledge graphs using LLMs and Neo4j. The implementation extracts entities/relationships from text and visualizes connections in a graph database.
+
+---
 
 ## 📦 Installation
 
 ### Core Requirements
-```
+
+```bash
 # Base packages
-!pip install --upgrade --quiet langchain langchain-community langchain-ollama neo4j
+pip install --upgrade --quiet langchain langchain-community langchain-ollama neo4j
 
 # Experimental graph features
-!pip install --upgrade --quiet langchain_experimental
+pip install --upgrade --quiet langchain_experimental
 ```
+
+---
 
 ### LLM Setup (Choose One)
 
-#### Option 1: Local Ollama (Recommended)
-```
+#### ✅ Option 1: Local Ollama (Recommended)
+
+```bash
 # Windows
 curl -OL https://ollama.com/download/OllamaSetup.exe
 ./OllamaSetup.exe
@@ -25,24 +30,32 @@ curl -OL https://ollama.com/download/OllamaSetup.exe
 # Linux
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-[Full Ollama installation guide](https://github.com/ollama/ollama/blob/main/docs/linux.md)
 
-#### Option 2: Cloud Models (OpenAI/HuggingFace)
-```
+📄 [Full Ollama installation guide](https://github.com/ollama/ollama/blob/main/docs/linux.md)
+
+---
+
+#### ☁️ Option 2: Cloud Models (OpenAI/HuggingFace)
+
+```python
 from langchain.llms import OpenAI  # Requires OpenAI API key
-llm = OpenAI(model_name="gpt-4") 
+llm = OpenAI(model_name="gpt-4")
 ```
-[LangChain LLM integrations](https://python.langchain.com/docs/integrations/llms)
+
+📄 [LangChain LLM integrations](https://python.langchain.com/docs/integrations/llms)
+
+---
 
 ## ⚙️ Configuration
 
 ### Neo4j Connection
-```
+
+```python
 import os
 from langchain_community.graphs import Neo4jGraph
 
 os.environ["NEO4J_URI"] = "neo4j+s://your-cluster.databases.neo4j.io"
-os.environ["NEO4J_USERNAME"] = "neo4j" 
+os.environ["NEO4J_USERNAME"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "your-password"
 
 graph = Neo4jGraph(
@@ -52,8 +65,11 @@ graph = Neo4jGraph(
 )
 ```
 
+---
+
 ### LLM Initialization
-```
+
+```python
 from langchain_ollama import ChatOllama
 
 llm = ChatOllama(
@@ -63,11 +79,15 @@ llm = ChatOllama(
 )
 ```
 
+---
+
 ## 🚀 Usage
 
 ### 1. Text to Knowledge Graph
-```
+
+```python
 from langchain_experimental.graph_transformers import LLMGraphTransformer
+from langchain.schema import Document
 
 llm_transformer = LLMGraphTransformer(llm=llm)
 
@@ -81,8 +101,11 @@ graph_documents = llm_transformer.convert_to_graph_documents(documents)
 graph.add_graph_documents(graph_documents)
 ```
 
+---
+
 ### 2. Querying the Graph
-```
+
+```python
 from langchain.chains import GraphCypherQAChain
 
 qa_chain = GraphCypherQAChain.from_llm(
@@ -95,10 +118,13 @@ response = qa_chain.invoke({"query": "Who founded SpaceX?"})
 print(response["result"])  # Elon Musk founded SpaceX
 ```
 
+---
+
 ## 🔄 Alternative Implementations
 
 ### Using OpenAI Models
-```
+
+```python
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
@@ -106,17 +132,22 @@ llm = ChatOpenAI(
     openai_api_key="sk-..."
 )
 ```
-[LangChain OpenAI documentation](https://python.langchain.com/docs/integrations/chat/openai)
+
+📄 [LangChain OpenAI documentation](https://python.langchain.com/docs/integrations/chat/openai)
+
+---
 
 ## 🛠 Troubleshooting
 
-**Common Issues:**
-- "Unknown relationship type" warnings: Verify with `print(graph.schema)`
-- Ollama connection errors: Ensure service is running (`ollama serve`)
-- Missing properties: Add explicit extraction instructions
+### Common Issues
 
-**Debugging Tools:**
-```
+- **"Unknown relationship type" warnings:** Verify with `print(graph.schema)`
+- **Ollama connection errors:** Ensure service is running (`ollama serve`)
+- **Missing properties:** Add explicit extraction instructions
+
+### Debugging Tools
+
+```python
 # Check stored nodes/relationships
 print(graph.query("MATCH (n) RETURN n LIMIT 10"))
 
@@ -125,34 +156,10 @@ graph.refresh_schema()
 print(graph.schema)
 ```
 
+---
+
 ## 📚 Resources
+
 - [LangChain Documentation](https://python.langchain.com/docs)
 - [Neo4j Python Driver Guide](https://neo4j.com/docs/python-manual/current/)
 - [Ollama Model Library](https://ollama.com/library)
-```
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/53975326/4558eeae-cf9b-4b67-befb-9638754626b5/Untitled103.ipynb
-[2] https://python.langchain.com/api_reference/core/language_models.html
-[3] https://dev.to/evolvedev/how-to-install-ollama-on-windows-1ei5
-[4] https://www.datacamp.com/tutorial/how-to-build-llm-applications-with-langchain
-[5] https://python.langchain.com/docs/introduction/
-[6] https://www.reddit.com/r/ollama/comments/1ibhxvm/guide_to_installing_and_locally_running_ollama/
-[7] https://github.com/ollama/ollama/blob/main/docs/linux.md
-[8] https://python.langchain.com/v0.1/docs/modules/model_io/llms/
-[9] https://python.langchain.com/docs/integrations/llms/
-[10] https://python.langchain.com/api_reference/core/language_models/langchain_core.language_models.llms.LLM.html
-[11] https://python.langchain.com/v0.1/docs/integrations/llms/
-[12] https://python.langchain.com/v0.1/docs/integrations/llms/openllm/
-[13] https://python.langchain.com/api_reference/langchain/chains/langchain.chains.llm.LLMChain.html
-[14] https://www.kdnuggets.com/ollama-tutorial-running-llms-locally-made-super-simple
-[15] https://js.langchain.com/docs/integrations/llms/
-[16] https://python.langchain.com/docs/tutorials/llm_chain/
-[17] https://ollama.com/download
-[18] https://www.langchain.com/langchain
-[19] https://github.com/langchain-ai/langchain
-[20] https://www.langchain.com
-[21] https://python.langchain.com/v0.1/docs/modules/model_io/
-
----
-Answer from Perplexity: pplx.ai/share
